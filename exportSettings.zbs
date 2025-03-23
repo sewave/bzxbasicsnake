@@ -1,0 +1,5 @@
+{
+  "OutputPath": "out\\bzxbasicsnake.tap",
+  "AddBasic": true,
+  "Autorun": true
+}

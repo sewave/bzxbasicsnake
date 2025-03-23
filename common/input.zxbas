@@ -1,0 +1,25 @@
+'Key constants
+#define FIRST_UPPERCASE_CHAR 60h
+#define LOWER_TO_UPPERCASE 20h
+#define NO_KEY ""
+
+'Reads a key from keyboard and if its 60h or plus lowers it by 20h,
+'effectively making it uppercase in case of letters
+FUNCTION readKeyUpperCase() AS STRING
+    DIM key AS STRING
+    DIM charVal AS UBYTE
+
+    key = INKEY
+    charVal = CODE(key)
+    IF(charVal >= FIRST_UPPERCASE_CHAR) key = CHR(charVal - LOWER_TO_UPPERCASE)
+    RETURN key
+END FUNCTION
+
+'Polls keys until no key is pressed
+SUB waitNoKey()
+    DIM key AS STRING
+
+    DO
+        key = INKEY
+    LOOP UNTIL(key = NO_KEY)
+END SUB

@@ -1,0 +1,97 @@
+'Wwindows system gfx indexes
+#define WINDOW_UP_LEFT_INDEX 0
+#define WINDOW_UP_INDEX 1
+#define WINDOW_UP_RIGHT_INDEX 2
+#define WINDOW_RIGHT_INDEX 3
+#define WINDOW_DOWN_RIGHT_INDEX 4
+#define WINDOW_DOWN_INDEX 5
+#define WINDOW_DOWN_LEFT_INDEX 6
+#define WINDOW_LEFT_INDEX 7
+
+'UDGs address
+#define UDG_ADDRESS 23675
+
+'Font address
+#define FONT_ADDRESS 23606
+#define FONT_OFFSET 256
+
+'Spectrum frame counter low byte
+#define FRAME_LOW_BYTE 23672
+
+'Wait frames
+#define FRAMES_WAITED_START 0
+#define FRAMES_WAITED_INC 1
+
+'Loads udgs address into system to switch graphics
+SUB loadUdgs(udgs AS UINTEGER)
+    POKE UINTEGER UDG_ADDRESS, udgs
+END SUB
+
+'Loads font address into system to switch graphics
+SUB loadFont(font AS UINTEGER)
+    POKE UINTEGER FONT_ADDRESS, font - FONT_OFFSET
+END SUB
+
+'Draws a straight line from start to end
+SUB drawLine(startX as UBYTE, startY as UBYTE, endX as UBYTE, endY as UBYTE, character as STRING)
+    DIM x, y as UBYTE
+
+    FOR x = startX TO endX : FOR y = startY TO endY
+        PRINT AT y, x ; character;
+    NEXT y : NEXT x
+END SUB
+
+'Returns the Spectrum low frame counter byte (Usually updated 1/50 s)
+FUNCTION getFrameLowByte() as UBYTE
+    RETURN PEEK(FRAME_LOW_BYTE)
+END FUNCTION
+
+'Clears the screen with the selected paper-border and ink
+SUB clearScreen(pPaper as UBYTE, pInk as UBYTE)
+    BORDER pPaper: PAPER pPaper : INK pInk : CLS
+END SUB
+
+'Waits for [frames] frames to pass, first frame could be shorter as it's
+'the actual frame but serves as vsync
+SUB waitFrames(frames AS UBYTE)
+    DIM framesWaited, currentFrame AS UBYTE
+
+    currentFrame = getFrameLowByte()
+    framesWaited = FRAMES_WAITED_START
+    WHILE framesWaited < frames
+        WHILE getFrameLowByte() = currentFrame
+           getFrameLowByte()
+        WEND
+        currentFrame = getFrameLowByte()
+        framesWaited = framesWaited + FRAMES_WAITED_INC
+    WEND
+END SUB
+
+'Waits for frames with waitFrames and then pauses 0 two times
+SUB waitFramesAndKey(frames AS UBYTE)
+    waitFrames(frames)
+    PAUSE 0
+    PAUSE 0
+END SUB
+
+'Draws a window using the string characters to cover all possibilities like:
+'0112
+'7  3
+'7  3
+'6554
+SUB drawWindow(startX as UBYTE, startY as UBYTE, width as UBYTE, height as UBYTE, color as UBYTE, characters as STRING)
+    INK color
+    'UP
+    drawLine(startX, startY, startX + width, startY, characters(WINDOW_UP_INDEX))
+    'RIGHT
+    drawLine(startX + width, startY, startX + width, startY + height, characters(WINDOW_RIGHT_INDEX))
+    'DOWN
+    drawLine(startX, startY + height, startX + width, startY + height, characters(WINDOW_DOWN_INDEX))
+    'LEFT
+    drawLine(startX, startY, startX, startY + height, characters(WINDOW_LEFT_INDEX))
+    'CORNERS
+    PRINT AT startY, startX; characters(WINDOW_UP_LEFT_INDEX);
+    PRINT AT startY, startX + width; characters(WINDOW_UP_RIGHT_INDEX);
+    PRINT AT startY + height, startX; characters(WINDOW_DOWN_LEFT_INDEX);
+    PRINT AT startY + height, startX + width; characters(WINDOW_DOWN_RIGHT_INDEX);
+END SUB

@@ -1,0 +1,25 @@
+'Movement
+#define NONE  %00000000
+#define UP    %00000001
+#define DOWN  %00000010
+#define LEFT  %00000100
+#define RIGHT %00001000
+
+'Colors
+#define BLACK       0
+#define BLUE        1
+#define RED         2
+#define PURPLE      3
+#define GREEN       4
+#define CYAN        5
+#define YELLOW      6
+#define WHITE       7
+#define TRANSPARENT 8
+
+'Boolean
+#define TRUE 1
+#define FALSE 0
+
+'Windows characters
+#define OUT_WINDOW_CHARACTERS "\:'\''\':\ :\.:\..\:.\: "
+#define IN_WINDOW_CHARACTERS  "\ .\..\. \: \' \''\ '\ :"

@@ -1,0 +1,393 @@
+'Basic Snake for Boriel ZX Basic
+'Only BASIC without ASM code
+'Thanks to DamienG (https://damieng.com/typography/zx-origins/)
+'for the awesome fonts
+'Wave 2025
+#include "common\video.zxbas"
+#include "common\input.zxbas"
+#include "constants\common.zxbas"
+#include "constants\game.zxbas"
+#include "gfx\snakeUdg.udg.zxbas"
+
+'Game vars
+DIM headPosition, tailPosition AS UBYTE
+DIM growthLeft AS UBYTE
+DIM direction AS UBYTE
+DIM snakeX(MAX_SNAKE_INDEX) AS UBYTE
+DIM snakeY(MAX_SNAKE_INDEX) AS UBYTE
+DIM score AS UBYTE
+DIM maxScore AS UBYTE
+DIM fruitX, fruitY AS UBYTE
+DIM delayFrames AS UBYTE
+DIM snakeLength AS UBYTE
+
+'Start of program
+loadFont(@reactorFont)
+loadUdgs(@snakeUdg)
+maxScore = INITIAL_MAX_SCORE
+showTitle()
+'Main loop
+DO
+   updateGame()
+   waitFrames(delayFrames)
+LOOP
+
+'Updates all the game status
+SUB updateGame()
+    readInput()
+    updatePlayer()
+    checkFruit()
+    checkDeath()    
+    drawScores()
+END SUB
+
+'Checks if the snake is colliding with the fruit to increase score and
+'put a new fruit
+SUB checkFruit()
+    IF(snakeX(headPosition) = fruitX AND snakeY(headPosition) = fruitY)
+        fruitSound()
+        score = score + FRUIT_INC_SCORE
+        IF(score > maxScore) maxScore = score
+        IF(snakeLength < MAX_SNAKE_LENGTH) growthLeft = FRUIT_GROWTH
+        putFruit()
+    END IF
+END SUB
+
+'Draws the score and max score numbers
+SUB drawScores()
+   PRINT AT SCORE_NUM_Y, SCORE_NUM_X; INK FONT_COLOR; score;
+   PRINT AT BEST_NUM_Y, BEST_NUM_X; INK FONT_COLOR; maxScore;
+END SUB
+
+'Kills the snake, showing GAME OVER and reseting the game
+SUB die()
+    FLASH TRUE
+    drawSnakeHead()
+    PRINT AT GAME_OVER_Y, GAME_OVER_X; INK GAME_OVER_INK; PAPER GAME_OVER_PAPER; GAME_OVER_STRING
+    FLASH FALSE
+    dieSound()
+    waitFramesAndKey(DIE_FRAMES)
+    showTitle()
+END SUB
+
+'Checks if the snake has to die, either by bounds or by biting herself
+SUB checkDeath()
+    DIM snakeXPos, snakeYPos AS UBYTE
+
+    snakeXPos = snakeX(headPosition)
+    snakeYPos = snakeY(headPosition)
+    'Check bounds death
+    IF(snakeXPos < MIN_BOARD_X OR snakeXPos > MAX_BOARD_X OR snakeYPos < MIN_BOARD_Y OR snakeYPos > MAX_BOARD_Y)
+        die()
+    END IF
+    'Check body death
+    FOR i = MIN_SNAKE_INDEX TO MAX_SNAKE_INDEX
+        IF(i <> headPosition AND snakeX(i) = snakeXPos AND snakeY(i) = snakeYPos)
+            die()
+            EXIT FOR
+        END IF
+    NEXT i
+END SUB
+
+'Draws the snake tail in it's different positions
+SUB drawSnakeTail()
+    DIM tailChar AS STRING
+    DIM nextTailX, nextTailY, tailX, tailY AS UBYTE
+    DIM nextTailPosition AS UBYTE
+
+    nextTailPosition = tailPosition + NEXT_TAIL_INC
+    IF(nextTailPosition > MAX_SNAKE_INDEX) nextTailPosition = 0
+    nextTailX = snakeX(nextTailPosition)
+    nextTailY = snakeY(nextTailPosition)
+    tailX = snakeX(tailPosition)
+    tailY = snakeY(tailPosition)
+    
+    IF(nextTailX > tailX)
+        tailChar = SNAKE_TAIL_RIGHT
+    ELSEIF (nextTailX < tailX)
+        tailChar = SNAKE_TAIL_LEFT
+    ELSEIF (nextTailY > tailY)
+        tailChar = SNAKE_TAIL_UP
+    ELSEIF (nextTailY < tailY)
+        tailChar = SNAKE_TAIL_DOWN
+    ELSE
+        tailChar = SNAKE_TAIL_RIGHT
+    END IF
+    PRINT AT tailY, tailX ; INK SNAKE_COLOR ; tailChar;
+END SUB
+
+'Draws the snake head in it's different positions
+SUB drawSnakeHead()
+    DIM snakeChar AS STRING
+    IF(direction = NONE)
+        snakeChar = SNAKE_HEAD_FRONT
+    ELSEIF(direction = RIGHT)
+        snakeChar = SNAKE_HEAD_RIGHT
+    ELSEIF (direction = LEFT)
+        snakeChar = SNAKE_HEAD_LEFT
+    ELSEIF (direction = UP)
+        snakeChar = SNAKE_HEAD_UP
+    ELSEIF (direction = DOWN)
+        snakeChar = SNAKE_HEAD_DOWN
+    END IF
+    PRINT AT snakeY(headPosition), snakeX(headPosition) ; INK SNAKE_COLOR ; snakeChar;
+END SUB
+
+'Reads the input and sets the snake direction, checks for pause too
+SUB readInput()
+    DIM key AS STRING
+
+    key = readKeyUpperCase()
+    IF(key = LEFT_KEY AND direction <> RIGHT)
+        direction = LEFT
+    ELSEIF(key = RIGHT_KEY AND direction <> LEFT)
+        direction = RIGHT
+    ELSEIF(key = UP_KEY AND direction <> DOWN)
+        direction = UP
+    ELSEIF(key = DOWN_KEY AND direction <> UP)
+        direction = DOWN
+    ELSEIF(key = PAUSE_KEY)
+        pauseGame()
+    END IF
+END SUB
+
+'Pauses the game until it is unpaused
+SUB pauseGame()
+    DIM key AS STRING
+
+    PRINT AT PAUSE_Y, PAUSE_X; INK RED; PAPER YELLOW; FLASH TRUE ; PAUSE_STRING
+    waitNoKey()
+    DO
+        key = readKeyUpperCase()
+    LOOP UNTIL (key = PAUSE_KEY)
+    waitNoKey()   
+    PRINT AT PAUSE_Y, PAUSE_X; PAUSE_STRING_CLEAR
+END SUB
+
+'Updates the player snake and head if it is moving
+SUB updatePlayer()
+    IF(direction <> NONE)
+        updateSnakeHeadPosition()
+        updateSnakeTailPosition()
+    END IF
+END SUB
+
+'Updates the snake tail position, it does not move if there is growth left
+SUB updateSnakeTailPosition()
+    IF(growthLeft > 0 AND snakeLength < MAX_SNAKE_LENGTH)
+        growthLeft = growthLeft - GROWTH_DEC
+        snakeLength = snakeLength + GROWTH_DEC
+    ELSE
+        eraseSnakeTail()
+        snakeX(tailPosition) = SNAKE_OUT_BOUNDS_X
+        snakeY(tailPosition) = SNAKE_OUT_BOUNDS_Y
+        tailPosition = tailPosition + NEXT_TAIL_INC
+        IF(tailPosition > MAX_SNAKE_INDEX) tailPosition = 0
+        drawSnakeTail()
+    END IF
+END SUB
+
+'Updates the snake head position and draws it and redraws the body to do curves
+SUB updateSnakeHeadPosition()
+    DIM prevHeadX, prevHeadY AS UBYTE
+    DIM oldHeadX, oldHeadY AS UBYTE
+    DIM oldHeadPos AS UBYTE
+    DIM prevHeadChar AS STRING
+
+    prevHeadChar = SNAKE_BODY
+    prevHeadX = snakeX(headPosition)
+    prevHeadY = snakeY(headPosition)
+    
+    oldHeadPos = headPosition - PREV_HEAD_DEC
+    IF(oldHeadPos > MAX_SNAKE_INDEX) oldHeadPos = MAX_SNAKE_INDEX
+    oldHeadX = snakeX(oldHeadPos)
+    oldHeadY = snakeY(oldHeadPos)
+    
+    headPosition = headPosition + NEXT_HEAD_INC
+    IF(headPosition > MAX_SNAKE_INDEX) headPosition = MIN_SNAKE_INDEX
+    IF(direction = RIGHT)
+        snakeX(headPosition) = prevHeadX + HEAD_SPEED
+        snakeY(headPosition) = prevHeadY
+        IF(oldHeadY > prevHeadY)
+            prevHeadChar = SNAKE_BODY_DW_RI
+        ELSEIF(oldHeadY < prevHeadY)
+            prevHeadChar = SNAKE_BODY_UP_RI
+        ELSE
+            prevHeadChar = SNAKE_BODY_HOR
+        END IF
+        if oldHeadX = SNAKE_OUT_BOUNDS_X prevHeadChar = SNAKE_TAIL_RIGHT
+    ELSEIF(direction = LEFT)
+        snakeX(headPosition) = prevHeadX - HEAD_SPEED
+        snakeY(headPosition) = prevHeadY
+        IF(oldHeadY > prevHeadY)
+            prevHeadChar = SNAKE_BODY_LF_DW
+        ELSEIF(oldHeadY < prevHeadY)
+            prevHeadChar = SNAKE_BODY_LF_UP
+        ELSE
+            prevHeadChar = SNAKE_BODY_HOR
+        END IF
+        if oldHeadX = SNAKE_OUT_BOUNDS_X prevHeadChar = SNAKE_TAIL_LEFT
+    ELSEIF(direction = UP)
+        snakeX(headPosition) = prevHeadX
+        snakeY(headPosition) = prevHeadY - HEAD_SPEED
+        IF(oldHeadX > prevHeadX)
+            prevHeadChar = SNAKE_BODY_UP_RI
+        ELSEIF(oldHeadX < prevHeadX)
+            prevHeadChar = SNAKE_BODY_LF_UP
+        ELSE
+            prevHeadChar = SNAKE_BODY_VER
+        END IF
+        if oldHeadX = SNAKE_OUT_BOUNDS_X prevHeadChar = SNAKE_TAIL_DOWN
+    ELSEIF(direction = DOWN)
+        snakeX(headPosition) = prevHeadX
+        snakeY(headPosition) = prevHeadY + HEAD_SPEED
+        IF(oldHeadX > prevHeadX)
+            prevHeadChar = SNAKE_BODY_DW_RI
+        ELSEIF(oldHeadX < prevHeadX)
+            prevHeadChar = SNAKE_BODY_LF_DW
+        ELSE
+            prevHeadChar = SNAKE_BODY_VER
+        END IF
+        if oldHeadX = SNAKE_OUT_BOUNDS_X prevHeadChar = SNAKE_TAIL_UP
+    END IF
+    
+    PRINT AT prevHeadY, prevHeadX; INK SNAKE_COLOR; prevHeadChar;
+    drawSnakeHead()
+END SUB
+
+'Erases the snake tail
+SUB eraseSnakeTail()
+    PRINT AT snakeY(tailPosition), snakeX(tailPosition); SNAKE_TAIL_ERASE
+END SUB
+
+'Returns a new board random X position within it's bounds
+FUNCTION getBoardRandomX() AS UBYTE
+    RETURN RND() * (MAX_BOARD_X - MIN_BOARD_X) + MIN_BOARD_X
+END FUNCTION
+
+'Returns a new board random Y position within it's bounds
+FUNCTION getBoardRandomY() AS UBYTE
+    RETURN RND() * (MAX_BOARD_Y - MIN_BOARD_Y) + MIN_BOARD_Y
+END FUNCTION
+
+'Puts all the snake positions to out of bounds
+SUB clearSnakePositions()
+    FOR i = MIN_SNAKE_INDEX TO MAX_SNAKE_INDEX
+        snakeX(i) = SNAKE_OUT_BOUNDS_X
+        snakeY(i) = SNAKE_OUT_BOUNDS_Y
+    NEXT i
+END SUB
+
+'Draws all the title, waits for difficulty selection and then starts a new game
+SUB showTitle()
+    BRIGHT TRUE
+    clearScreen(GAMEPLAY_PAPER, GAMEPLAY_INK)
+    
+    'Title window
+    drawWindow(INTRO_WINDOW_X, INTRO_WINDOW_Y, INTRO_WINDOW_WIDTH, INTRO_WINDOW_HEIGHT, BOARD_COLOR, OUT_WINDOW_CHARACTERS)
+    
+    'Print intro
+    INK GAMEPLAY_INK
+    PRINT AT INTRO_Y, INTRO_X; INTRO_1;
+    PRINT INTRO_2; : PRINT INTRO_3; : PRINT INTRO_4;
+    PRINT INTRO_5; : PRINT INTRO_6; : PRINT INTRO_7;
+    
+    'Print intro
+    INK INTRO_TITLE_COLOR
+    PRINT AT INTRO_TITLE_Y, INTRO_TITLE_X; INTRO_TITLE;
+    PRINT AT INTRO_TITLE_Y_2, INTRO_TITLE_X_2; INTRO_TITLE_2;
+    
+    'Print max
+    INK INTRO_TITLE_COLOR
+    PRINT AT INTRO_MAX_SCORE_Y, INTRO_MAX_SCORE_X; INTRO_MAX_SCORE_STRING;
+    PRINT AT INTRO_MAX_SCORE_NUM_Y, INTRO_MAX_SCORE_NUM_X; FLASH TRUE; INK INTRO_MAX_SCORE_NUM_INK; PAPER INTRO_MAX_SCORE_NUM_PAPER; maxScore;
+    
+    'Print instructions
+    INK INSTRUCTIONS_COLOR
+    PRINT AT INSTRUCTIONS_Y_1, INSTRUCTIONS_X_1; INSTRUCTIONS_1;
+    PRINT AT INSTRUCTIONS_Y_2, INSTRUCTIONS_X_2; INSTRUCTIONS_2;
+    PRINT AT INSTRUCTIONS_Y_3, INSTRUCTIONS_X_3; INSTRUCTIONS_3;  
+    
+    selectDifficulty()
+    
+    startNewGame()
+END SUB
+
+'Resets the game, restores everything except the max score and difficulty
+SUB startNewGame()
+    snakeLength = MIN_SNAKE_LENGTH
+    growthLeft = START_GROWTH
+    score = START_SCORE
+    clearScreen(GAMEPLAY_PAPER, GAMEPLAY_INK)
+    clearSnakePositions()
+    headPosition = HEAD_START_INDEX
+    tailPosition = TAIL_START_INDEX
+    snakeX(headPosition) = getBoardRandomX()
+    snakeY(headPosition) = getBoardRandomY()
+    direction = NONE
+    drawWindow(TITLE_WINDOW_X, TITLE_WINDOW_Y, TITLE_WINDOW_WIDTH, TITLE_WINDOW_HEIGHT, HEADER_COLOR, OUT_WINDOW_CHARACTERS)
+    drawWindow(BOARD_WINDOW_X, BOARD_WINDOW_Y, BOARD_WINDOW_WIDTH, BOARD_WINDOW_HEIGHT, BOARD_COLOR, IN_WINDOW_CHARACTERS)
+    drawWindow(STATUS_WINDOW_X, STATUS_WINDOW_Y, STATUS_WINDOW_WIDTH, STATUS_WINDOW_HEIGHT, STATUS_COLOR, OUT_WINDOW_CHARACTERS)
+    PRINT AT TITLE_Y, TITLE_X; INK FONT_COLOR; TITLE_STRING;
+    drawScoreTexts()
+    drawSnakeHead()
+    putFruit()
+    startSound()
+END SUB
+
+'Prints the select difficulty string and waits for a selection
+SUB selectDifficulty()
+    DIM difficulty AS STRING
+    
+    PRINT AT DIFFICULTY_Y, DIFFICULTY_X; INK DIFFICULTY_COLOR; DIFFICULTY_STRING;
+    WHILE (difficulty <> DIFFICULTY_1 AND difficulty <> DIFFICULTY_2 AND difficulty <> DIFFICULTY_3)
+        difficulty = readKeyUpperCase()
+    WEND
+    delayFrames = DIFFICULTY_FRAMES - VAL(difficulty)
+END SUB
+
+'Checks if the fruit is colliding with the snake, used to
+'generate a new fruit in an unused space
+FUNCTION fruitInSnake() AS UBYTE
+    FOR i = MIN_SNAKE_INDEX TO MAX_SNAKE_INDEX
+        IF(snakeX(i) = fruitX AND snakeY(i) = fruitY)
+            return TRUE
+        END IF
+    NEXT i
+    RETURN FALSE
+END FUNCTION
+
+'Puts a new fruit on a free board position
+SUB putFruit()
+    DO
+        fruitX = getBoardRandomX()
+        fruitY = getBoardRandomY()
+    LOOP UNTIL fruitInSnake() = FALSE
+    PRINT AT fruitY, fruitX; INK FRUIT_COLOR; FRUIT_CHAR
+END SUB
+
+'Draws the score and best texts, not the actual scores
+SUB drawScoreTexts()
+    PRINT AT SCORE_STRING_Y, SCORE_STRING_X; INK FONT_COLOR; SCORE_STRING;
+    PRINT AT BEST_STRING_Y, BEST_STRING_X; INK FONT_COLOR; BEST_STRING;
+END SUB
+
+'Beeps the fruit sound
+SUB fruitSound()
+    BEEP .1, 10
+END SUB
+
+'Beeps the die sound
+SUB dieSound()
+    BEEP .1, 20
+END SUB
+
+'Beeps the start sound
+SUB startSound()
+    BEEP .4, 40
+END SUB
+
+reactorFont:
+ASM
+    incbin "gfx\Reactor.ch8"
+END ASM

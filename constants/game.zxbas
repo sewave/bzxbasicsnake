@@ -1,0 +1,188 @@
+'Snake indexes
+#define MAX_SNAKE_INDEX 127
+#define MIN_SNAKE_INDEX 0
+
+'Snake color
+#define SNAKE_COLOR GREEN
+
+'Snake udgs
+#define SNAKE_HEAD_RIGHT CHR(144)
+#define SNAKE_HEAD_DOWN  CHR(145)
+#define SNAKE_HEAD_LEFT  CHR(146)
+#define SNAKE_HEAD_UP    CHR(147)
+#define SNAKE_HEAD_FRONT CHR(158)
+
+#define SNAKE_TAIL_RIGHT CHR(148)
+#define SNAKE_TAIL_UP    CHR(149)
+#define SNAKE_TAIL_LEFT  CHR(150)
+#define SNAKE_TAIL_DOWN  CHR(151)
+
+#define SNAKE_BODY_HOR   CHR(152)
+#define SNAKE_BODY_VER   CHR(153)
+#define SNAKE_BODY_DW_RI CHR(154)
+#define SNAKE_BODY_LF_DW CHR(155)
+#define SNAKE_BODY_UP_RI CHR(156)
+#define SNAKE_BODY_LF_UP CHR(157)
+
+'Snake generic body and tail
+#define SNAKE_BODY "\::"
+#define SNAKE_TAIL_ERASE " "
+
+'Gameplay colors
+#define HEADER_COLOR BLUE
+#define BOARD_COLOR PURPLE
+#define STATUS_COLOR CYAN
+#define FONT_COLOR WHITE
+#define GAMEPLAY_PAPER BLACK
+#define GAMEPLAY_INK GREEN
+
+'Fruit
+#define FRUIT_CHAR "\U"
+#define FRUIT_COLOR RED
+#define FRUIT_GROWTH 4
+#define FRUIT_INC_SCORE 1
+
+'Growth
+#define MIN_SNAKE_LENGTH 2
+#define MAX_SNAKE_LENGTH MAX_SNAKE_INDEX - 2
+#define START_GROWTH 2
+#define GROWTH_DEC 1
+#define SNAKE_GROWTH 1
+
+'Board dimensions
+#define MIN_BOARD_X 1
+#define MIN_BOARD_Y 4
+#define MAX_BOARD_X 30
+#define MAX_BOARD_Y 18
+#define BOARD_WIDTH 30
+
+'Status lines Y positions
+#define FIRST_STATUS_LINE_Y 21
+#define SECOND_STATUS_LINE_Y 22
+
+'Game over
+#define GAME_OVER_Y SECOND_STATUS_LINE_Y
+#define GAME_OVER_X 7
+#define GAME_OVER_INK RED
+#define GAME_OVER_PAPER YELLOW
+#define GAME_OVER_STRING "FIN DE LA PARTIDA"
+#define DIE_FRAMES 60
+
+'Head, body and tail
+#define HEAD_START_INDEX 0
+#define TAIL_START_INDEX 0
+#define SNAKE_OUT_BOUNDS_X 255
+#define SNAKE_OUT_BOUNDS_Y 255
+#define NEXT_TAIL_INC 1
+#define NEXT_HEAD_INC 1
+#define PREV_HEAD_DEC 1
+#define HEAD_SPEED 1
+
+'Gamplay score and best
+#define START_SCORE 0
+#define SCORE_STRING "Puntos:";
+#define BEST_STRING "Mejor:";
+
+#define SCORE_NUM_X 9
+#define SCORE_NUM_Y FIRST_STATUS_LINE_Y
+#define BEST_NUM_X 28
+#define BEST_NUM_Y FIRST_STATUS_LINE_Y
+
+#define SCORE_STRING_X 1
+#define SCORE_STRING_Y FIRST_STATUS_LINE_Y
+#define BEST_STRING_X 21
+#define BEST_STRING_Y FIRST_STATUS_LINE_Y
+
+#define INITIAL_MAX_SCORE 10
+
+'Gameplay title
+#define TITLE_STRING "Snake para BZX Basic por Wave"
+#define TITLE_X 1
+#define TITLE_Y 1
+
+'Pause
+#define PAUSE_FRAMES 60
+#define PAUSE_X 13
+#define PAUSE_Y SECOND_STATUS_LINE_Y
+#define PAUSE_STRING "PAUSA"
+#define PAUSE_STRING_CLEAR "     "
+
+'Keys
+#define LEFT_KEY  "O"
+#define RIGHT_KEY "P"
+#define UP_KEY    "Q"
+#define DOWN_KEY  "A"
+#define PAUSE_KEY "S"
+
+'Gameplay windows
+#define TITLE_WINDOW_X 0
+#define TITLE_WINDOW_Y 0
+#define TITLE_WINDOW_WIDTH 31
+#define TITLE_WINDOW_HEIGHT 2
+
+#define BOARD_WINDOW_X 0
+#define BOARD_WINDOW_Y 3
+#define BOARD_WINDOW_WIDTH 31
+#define BOARD_WINDOW_HEIGHT 16
+
+#define STATUS_WINDOW_X 0
+#define STATUS_WINDOW_Y 20
+#define STATUS_WINDOW_WIDTH 31
+#define STATUS_WINDOW_HEIGHT 3
+
+'Intro constants
+#define INTRO_X 0
+#define INTRO_Y 3
+#define INTRO_1  "  _________   ____ __  _   ___  "
+#define INTRO_2  " / ___/    \ /    |  |/ ] /  _] "
+#define INTRO_3  "(   \_|  _  |  o  |  ' / /  [_  "
+#define INTRO_4  " \\__  |  |  |     |    \|    _] "
+#define INTRO_5  " /  \ |  |  |  _  |     |   [_  "
+#define INTRO_6  " \\    |  |  |  |  |  .  |     | "
+#define INTRO_7  "  \\___|__|__|__|__|__|\\_|_____| "
+
+'Intro title
+#define INTRO_TITLE_X 1
+#define INTRO_TITLE_Y 11
+#define INTRO_TITLE_COLOR YELLOW
+#define INTRO_TITLE  "Para Boriel ZX Basic por Wave"
+#define INTRO_TITLE_X_2 14
+#define INTRO_TITLE_Y_2 12
+#define INTRO_TITLE_2 "2025"
+
+'Intro instructions
+#define INSTRUCTIONS_X_1 4
+#define INSTRUCTIONS_Y_1 15
+#define INSTRUCTIONS_1  "\{b1}O: \{b0}Derecha \{b1}P: \{b0}Izquierda\{b1}"
+#define INSTRUCTIONS_X_2 4
+#define INSTRUCTIONS_Y_2 16
+#define INSTRUCTIONS_2  "\{b1}Q: \{b0}Arriba  \{b1}A: \{b0}Abajo\{b1}"
+#define INSTRUCTIONS_X_3 12
+#define INSTRUCTIONS_Y_3 17
+#define INSTRUCTIONS_3  "\{b1}S:\{b0} Pausa\{b1}"
+#define INSTRUCTIONS_COLOR WHITE
+
+'Intro max score
+#define INTRO_MAX_SCORE_X 13
+#define INTRO_MAX_SCORE_Y 19
+#define INTRO_MAX_SCORE_STRING "Mejor:"
+#define INTRO_MAX_SCORE_NUM_X 15
+#define INTRO_MAX_SCORE_NUM_Y 20
+#define INTRO_MAX_SCORE_NUM_INK CYAN 
+#define INTRO_MAX_SCORE_NUM_PAPER BLUE
+
+'Intro difficulty
+#define DIFFICULTY_X 5
+#define DIFFICULTY_Y 22
+#define DIFFICULTY_STRING "Elige dificultad (1-3)"
+#define DIFFICULTY_COLOR RED
+#define DIFFICULTY_1 "1"
+#define DIFFICULTY_2 "2"
+#define DIFFICULTY_3 "3"
+#define DIFFICULTY_FRAMES 4
+
+'Intro window
+#define INTRO_WINDOW_X 0
+#define INTRO_WINDOW_Y 0
+#define INTRO_WINDOW_WIDTH 31
+#define INTRO_WINDOW_HEIGHT 23
