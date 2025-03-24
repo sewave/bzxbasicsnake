@@ -2,8 +2,10 @@
 #define MAX_SNAKE_INDEX 127
 #define MIN_SNAKE_INDEX 0
 
-'Snake color
+'Snake
 #define SNAKE_COLOR GREEN
+#define SNAKE_BODY "\::"
+#define SNAKE_TAIL_ERASE " "
 
 'Snake udgs
 #define SNAKE_HEAD_RIGHT CHR(144)
@@ -24,14 +26,7 @@
 #define SNAKE_BODY_UP_RI CHR(156)
 #define SNAKE_BODY_LF_UP CHR(157)
 
-'Snake generic body and tail
-#define SNAKE_BODY "\::"
-#define SNAKE_TAIL_ERASE " "
-
 'Gameplay colors
-#define HEADER_COLOR BLUE
-#define BOARD_COLOR PURPLE
-#define STATUS_COLOR CYAN
 #define FONT_COLOR WHITE
 #define GAMEPLAY_PAPER BLACK
 #define GAMEPLAY_INK GREEN
@@ -49,16 +44,26 @@
 #define GROWTH_DEC 1
 #define SNAKE_GROWTH 1
 
-'Board dimensions
+'Board
 #define MIN_BOARD_X 1
 #define MIN_BOARD_Y 4
 #define MAX_BOARD_X 30
 #define MAX_BOARD_Y 18
 #define BOARD_WIDTH 30
+#define BOARD_COLOR PURPLE
+#define BOARD_WINDOW_X 0
+#define BOARD_WINDOW_Y 3
+#define BOARD_WINDOW_WIDTH 32
+#define BOARD_WINDOW_HEIGHT 17
 
-'Status lines Y positions
+'Status
 #define FIRST_STATUS_LINE_Y 21
 #define SECOND_STATUS_LINE_Y 22
+#define STATUS_WINDOW_X 0
+#define STATUS_WINDOW_Y 20
+#define STATUS_WINDOW_WIDTH 32
+#define STATUS_WINDOW_HEIGHT 4
+#define STATUS_COLOR CYAN
 
 'Game over
 #define GAME_OVER_Y SECOND_STATUS_LINE_Y
@@ -78,27 +83,29 @@
 #define PREV_HEAD_DEC 1
 #define HEAD_SPEED 1
 
-'Gamplay score and best
+'Scores
 #define START_SCORE 0
 #define SCORE_STRING "Puntos:";
 #define BEST_STRING "Mejor:";
-
 #define SCORE_NUM_X 9
 #define SCORE_NUM_Y FIRST_STATUS_LINE_Y
 #define BEST_NUM_X 28
 #define BEST_NUM_Y FIRST_STATUS_LINE_Y
-
 #define SCORE_STRING_X 1
 #define SCORE_STRING_Y FIRST_STATUS_LINE_Y
 #define BEST_STRING_X 21
 #define BEST_STRING_Y FIRST_STATUS_LINE_Y
-
 #define INITIAL_MAX_SCORE 10
 
-'Gameplay title
-#define TITLE_STRING "Snake para BZX Basic por Wave"
-#define TITLE_X 1
-#define TITLE_Y 1
+'Header
+#define HEADER_COLOR BLUE
+#define HEADER_STRING "Snake para BZX Basic por Wave"
+#define HEADER_X 1
+#define HEADER_Y 1
+#define HEADER_WINDOW_X 0
+#define HEADER_WINDOW_Y 0
+#define HEADER_WINDOW_WIDTH 32
+#define HEADER_WINDOW_HEIGHT 3
 
 'Pause
 #define PAUSE_FRAMES 60
@@ -114,53 +121,37 @@
 #define DOWN_KEY  "A"
 #define PAUSE_KEY "S"
 
-'Gameplay windows
-#define TITLE_WINDOW_X 0
-#define TITLE_WINDOW_Y 0
-#define TITLE_WINDOW_WIDTH 31
-#define TITLE_WINDOW_HEIGHT 2
-
-#define BOARD_WINDOW_X 0
-#define BOARD_WINDOW_Y 3
-#define BOARD_WINDOW_WIDTH 31
-#define BOARD_WINDOW_HEIGHT 16
-
-#define STATUS_WINDOW_X 0
-#define STATUS_WINDOW_Y 20
-#define STATUS_WINDOW_WIDTH 31
-#define STATUS_WINDOW_HEIGHT 3
-
 'Intro constants
-#define INTRO_X 0
-#define INTRO_Y 3
-#define INTRO_1  "  _________   ____ __  _   ___  "
-#define INTRO_2  " / ___/    \ /    |  |/ ] /  _] "
-#define INTRO_3  "(   \_|  _  |  o  |  ' / /  [_  "
-#define INTRO_4  " \\__  |  |  |     |    \|    _] "
-#define INTRO_5  " /  \ |  |  |  _  |     |   [_  "
-#define INTRO_6  " \\    |  |  |  |  |  .  |     | "
-#define INTRO_7  "  \\___|__|__|__|__|__|\\_|_____| "
+#define INTRO_TITLE_X 0
+#define INTRO_TITLE_Y 3
+#define INTRO_TITLE_1  "  _________   ____ __  _   ___  "
+#define INTRO_TITLE_2  " / ___/    \ /    |  |/ ] /  _] "
+#define INTRO_TITLE_3  "(   \_|  _  |  o  |  ' / /  [_  "
+#define INTRO_TITLE_4  " \\__  |  |  |     |    \|    _] "
+#define INTRO_TITLE_5  " /  \ |  |  |  _  |     |   [_  "
+#define INTRO_TITLE_6  " \\    |  |  |  |  |  .  |     | "
+#define INTRO_TITLE_7  "  \\___|__|__|__|__|__|\\_|_____| "
 
 'Intro title
-#define INTRO_TITLE_X 1
-#define INTRO_TITLE_Y 11
-#define INTRO_TITLE_COLOR YELLOW
-#define INTRO_TITLE  "Para Boriel ZX Basic por Wave"
-#define INTRO_TITLE_X_2 14
-#define INTRO_TITLE_Y_2 12
-#define INTRO_TITLE_2 "2025"
+#define INTRO_CREDITS_X 1
+#define INTRO_CREDITS_Y 11
+#define INTRO_CREDITS_COLOR YELLOW
+#define INTRO_CREDITS  "Para Boriel ZX Basic por Wave"
+#define INTRO_CREDITS_X_2 14
+#define INTRO_CREDITS_Y_2 12
+#define INTRO_CREDITS_2 "2025"
 
 'Intro instructions
-#define INSTRUCTIONS_X_1 4
-#define INSTRUCTIONS_Y_1 15
-#define INSTRUCTIONS_1  "\{b1}O: \{b0}Derecha \{b1}P: \{b0}Izquierda\{b1}"
-#define INSTRUCTIONS_X_2 4
-#define INSTRUCTIONS_Y_2 16
-#define INSTRUCTIONS_2  "\{b1}Q: \{b0}Arriba  \{b1}A: \{b0}Abajo\{b1}"
-#define INSTRUCTIONS_X_3 12
-#define INSTRUCTIONS_Y_3 17
-#define INSTRUCTIONS_3  "\{b1}S:\{b0} Pausa\{b1}"
-#define INSTRUCTIONS_COLOR WHITE
+#define INTRO_INSTRUCTIONS_X_1 4
+#define INTRO_INSTRUCTIONS_Y_1 15
+#define INTRO_INSTRUCTIONS_1  "\{b1}O: \{b0}Derecha \{b1}P: \{b0}Izquierda\{b1}"
+#define INTRO_INSTRUCTIONS_X_2 4
+#define INTRO_INSTRUCTIONS_Y_2 16
+#define INTRO_INSTRUCTIONS_2  "\{b1}Q: \{b0}Arriba  \{b1}A: \{b0}Abajo\{b1}"
+#define INTRO_INSTRUCTIONS_X_3 12
+#define INTRO_INSTRUCTIONS_Y_3 17
+#define INTRO_INSTRUCTIONS_3  "\{b1}S:\{b0} Pausa\{b1}"
+#define INTRO_INSTRUCTIONS_COLOR WHITE
 
 'Intro max score
 #define INTRO_MAX_SCORE_X 13
@@ -184,5 +175,5 @@
 'Intro window
 #define INTRO_WINDOW_X 0
 #define INTRO_WINDOW_Y 0
-#define INTRO_WINDOW_WIDTH 31
-#define INTRO_WINDOW_HEIGHT 23
+#define INTRO_WINDOW_WIDTH 32
+#define INTRO_WINDOW_HEIGHT 24

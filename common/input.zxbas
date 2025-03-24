@@ -6,11 +6,9 @@
 'Reads a key from keyboard and if its 60h or plus lowers it by 20h,
 'effectively making it uppercase in case of letters
 FUNCTION readKeyUpperCase() AS STRING
-    DIM key AS STRING
-    DIM charVal AS UBYTE
+    DIM key AS STRING = INKEY
+    DIM charVal AS UBYTE = CODE(key)
 
-    key = INKEY
-    charVal = CODE(key)
     IF(charVal >= FIRST_UPPERCASE_CHAR) key = CHR(charVal - LOWER_TO_UPPERCASE)
     RETURN key
 END FUNCTION
@@ -22,4 +20,15 @@ SUB waitNoKey()
     DO
         key = INKEY
     LOOP UNTIL(key = NO_KEY)
+END SUB
+
+'Waits for no key press, then for the key expected case insensitive, then no key
+SUB waitKeyUpperCase(waitKey AS STRING)
+    DIM key AS STRING
+
+    waitNoKey()
+    DO
+        key = readKeyUpperCase()
+    LOOP UNTIL(key = waitKey)
+    waitNoKey()
 END SUB
