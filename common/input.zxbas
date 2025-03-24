@@ -3,6 +3,9 @@
 #define LOWER_TO_UPPERCASE 20h
 #define NO_KEY ""
 
+'Input vars
+DIM frameKey AS STRING
+
 'Reads a key from keyboard and if its 60h or plus lowers it by 20h,
 'effectively making it uppercase in case of letters
 FUNCTION readKeyUpperCase() AS STRING
@@ -12,23 +15,3 @@ FUNCTION readKeyUpperCase() AS STRING
     IF(charVal >= FIRST_UPPERCASE_CHAR) key = CHR(charVal - LOWER_TO_UPPERCASE)
     RETURN key
 END FUNCTION
-
-'Polls keys until no key is pressed
-SUB waitNoKey()
-    DIM key AS STRING
-
-    DO
-        key = INKEY
-    LOOP UNTIL(key = NO_KEY)
-END SUB
-
-'Waits for no key press, then for the key expected case insensitive, then no key
-SUB waitKeyUpperCase(waitKey AS STRING)
-    DIM key AS STRING
-
-    waitNoKey()
-    DO
-        key = readKeyUpperCase()
-    LOOP UNTIL(key = waitKey)
-    waitNoKey()
-END SUB

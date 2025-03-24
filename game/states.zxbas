@@ -1,0 +1,140 @@
+'File with the game states subroutines
+DIM delayFrames AS UBYTE
+DIM delayedFrames AS UBYTE
+
+'Kills the snake, showing GAME OVER
+SUB stateStartGameOver()
+    FLASH TRUE
+    drawSnakeHead()
+    PRINT AT GAME_OVER_Y, GAME_OVER_X; INK GAME_OVER_INK; PAPER GAME_OVER_PAPER; GAME_OVER_STRING
+    FLASH FALSE
+    dieSound()
+    setStateWaitFrames(DIE_FRAMES, STATE_WAIT_KEY_GAME_OVER)
+END SUB
+
+'Sets to wait for any key and goes to title
+SUB stateWaitKeyGameOver()
+    setStateWaitAnyKey(STATE_START_TITLE)
+END SUB
+
+'Shows the pause string and changes to wait unpause on next state after no key
+SUB stateStartPause()
+    PRINT AT PAUSE_Y, PAUSE_X; INK RED; PAPER YELLOW; FLASH TRUE ; PAUSE_STRING
+    setStateWaitNoKey(STATE_WAIT_UNPAUSE)
+END SUB
+
+'Waits to unpause to reanudate the game on next state after no key
+SUB stateWaitUnpause()
+    IF(frameKey = PAUSE_KEY)
+        PRINT AT PAUSE_Y, PAUSE_X; PAUSE_STRING_CLEAR
+        setStateWaitNoKey(STATE_GAME_PLAYING)
+    END IF
+END SUB
+
+'Draws all the title, waits for difficulty selection and then starts a new game
+SUB stateStartTitle()
+    BRIGHT TRUE
+    clearScreen(GAMEPLAY_PAPER, GAMEPLAY_INK)
+    
+    'Title window
+    drawWindow(INTRO_WINDOW_X, INTRO_WINDOW_Y, INTRO_WINDOW_WIDTH, INTRO_WINDOW_HEIGHT, BOARD_COLOR, OUT_WINDOW_CHARACTERS)
+    
+    'Print title
+    INK GAMEPLAY_INK
+    PRINT AT INTRO_TITLE_Y, INTRO_TITLE_X; INTRO_TITLE_1;
+    PRINT INTRO_TITLE_2; : PRINT INTRO_TITLE_3; : PRINT INTRO_TITLE_4;
+    PRINT INTRO_TITLE_5; : PRINT INTRO_TITLE_6; : PRINT INTRO_TITLE_7;
+    
+    'Print credits
+    INK INTRO_CREDITS_COLOR
+    PRINT AT INTRO_CREDITS_Y, INTRO_CREDITS_X; INTRO_CREDITS;
+    PRINT AT INTRO_CREDITS_Y_2, INTRO_CREDITS_X_2; INTRO_CREDITS_2;
+    
+    'Print max score
+    INK INTRO_CREDITS_COLOR
+    PRINT AT INTRO_MAX_SCORE_Y, INTRO_MAX_SCORE_X; INTRO_MAX_SCORE_STRING;
+    PRINT AT INTRO_MAX_SCORE_NUM_Y, INTRO_MAX_SCORE_NUM_X; FLASH TRUE; INK INTRO_MAX_SCORE_NUM_INK; PAPER INTRO_MAX_SCORE_NUM_PAPER; maxScore;
+    
+    'Print instructions
+    INK INTRO_INSTRUCTIONS_COLOR
+    PRINT AT INTRO_INSTRUCTIONS_Y_1, INTRO_INSTRUCTIONS_X_1; INTRO_INSTRUCTIONS_1;
+    PRINT AT INTRO_INSTRUCTIONS_Y_2, INTRO_INSTRUCTIONS_X_2; INTRO_INSTRUCTIONS_2;
+    PRINT AT INTRO_INSTRUCTIONS_Y_3, INTRO_INSTRUCTIONS_X_3; INTRO_INSTRUCTIONS_3;
+    
+    'Print select difficulty
+    PRINT AT DIFFICULTY_Y, DIFFICULTY_X; INK DIFFICULTY_COLOR; DIFFICULTY_STRING;
+    
+    setGameState(STATE_WAIT_DIFFICULTY)
+END SUB
+
+'Waits for difficulty selection to change game state
+SUB stateWaitDifficulty()
+    IF (frameKey = DIFFICULTY_1 OR frameKey = DIFFICULTY_2 OR frameKey = DIFFICULTY_3)
+        delayFrames = DIFFICULTY_FRAMES - VAL(frameKey)
+        setGameState(STATE_START_GAME)
+    END IF
+END SUB
+
+'Resets the game, restores everything except the max score and difficulty
+SUB stateStartGame()
+    delayedFrames = INITIAL_DELAYED_FRAMES
+    snakeLength = MIN_SNAKE_LENGTH
+    growthLeft = START_GROWTH
+    score = START_SCORE
+    clearScreen(GAMEPLAY_PAPER, GAMEPLAY_INK)
+    clearSnakePositions()
+    headPosition = HEAD_START_INDEX
+    tailPosition = TAIL_START_INDEX
+    snakeX(headPosition) = getBoardRandomX()
+    snakeY(headPosition) = getBoardRandomY()
+    direction = NONE
+    drawWindow(HEADER_WINDOW_X, HEADER_WINDOW_Y, HEADER_WINDOW_WIDTH, HEADER_WINDOW_HEIGHT, HEADER_COLOR, OUT_WINDOW_CHARACTERS)
+    drawWindow(BOARD_WINDOW_X, BOARD_WINDOW_Y, BOARD_WINDOW_WIDTH, BOARD_WINDOW_HEIGHT, BOARD_COLOR, IN_WINDOW_CHARACTERS)
+    drawWindow(STATUS_WINDOW_X, STATUS_WINDOW_Y, STATUS_WINDOW_WIDTH, STATUS_WINDOW_HEIGHT, STATUS_COLOR, OUT_WINDOW_CHARACTERS)
+    PRINT AT HEADER_Y, HEADER_X; INK FONT_COLOR; HEADER_STRING;
+    drawScoreTexts()
+    drawScores()
+    drawSnakeHead()
+    putFruit()
+    startSound()
+    setGameState(STATE_GAME_PLAYING)
+END SUB
+
+'Inits the game
+SUB stateInitGame()
+    loadFont(@reactorFont)
+    loadUdgs(@snakeUdg)
+    maxScore = INITIAL_MAX_SCORE
+    setGameState(STATE_START_TITLE)
+END SUB
+
+'Updates all the game status
+SUB stateGamePlaying()
+    delayedFrames = delayedFrames + 1
+    IF delayedFrames >= delayFrames
+        delayedFrames = INITIAL_DELAYED_FRAMES
+        processInput()
+        updatePlayer()
+        checkFruit()
+        checkDeath()   
+        drawScores()
+    END IF
+END SUB
+
+'Slots 4-7 are reserved for future use
+DIM stateSubroutines(STATE_WAIT_KEY_GAME_OVER) AS UINTEGER => { _
+    @stateWaitFrames, _
+    @stateWaitAKey, _
+    @stateWaitAnyKey, _
+    @stateWaitNoKey, _
+    0, 0, 0, 0, _     
+    @stateInitGame, _
+    @stateStartTitle, _
+    @stateWaitDifficulty, _
+    @stateStartGame, _
+    @stateGamePlaying, _
+    @stateStartPause, _
+    @stateWaitUnpause, _
+    @stateStartGameOver, _
+    @stateWaitKeyGameOver _
+}
