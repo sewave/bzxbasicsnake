@@ -154,9 +154,9 @@
 #define INTRO_INSTRUCTIONS_Y_2 15
 #define INTRO_INSTRUCTIONS_2_A  ": Arriba    "
 #define INTRO_INSTRUCTIONS_2_B  ": Abajo"
-#define INTRO_INSTRUCTIONS_X_3 12
+#define INTRO_INSTRUCTIONS_X_3 8
 #define INTRO_INSTRUCTIONS_Y_3 16
-#define INTRO_INSTRUCTIONS_3  ": Pausa"
+#define INTRO_INSTRUCTIONS_3  ": Elegir/Pausa"
 #define INTRO_INSTRUCTIONS_COLOR WHITE
 
 'Intro max score

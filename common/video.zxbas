@@ -52,12 +52,10 @@ END SUB
 'Wait vsync
 SUB waitVsync()
     DIM currentFrame AS UBYTE = getFrameLowByte()
-    DIM waited AS UBYTE = 0
-
-    WHILE currentFrame = getFrameLowByte()
-        'To avoid optimization removal
-        waited = waited + 1
-    WEND
+    DIM newFrame AS UBYTE
+    DO
+        newFrame = getFrameLowByte()
+    LOOP UNTIL newFrame <> currentFrame
 END SUB
 
 'Draws a window using the string characters to cover all possibilities like:
