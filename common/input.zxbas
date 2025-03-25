@@ -42,6 +42,14 @@
 #define NUM_PLAYERS_MAX_INDEX NUM_PLAYERS - 1
 #define KEYS_MAX_INDEX CONTROL_FIRE_INDEX
 
+'Kempston
+#define KEMPSTON_PORT  1Fh
+#define KEMPSTON_RIGHT %00000001
+#define KEMPSTON_LEFT  %00000010
+#define KEMPSTON_DOWN  %00000100
+#define KEMPSTON_UP    %00001000
+#define KEMPSTON_FIRE  %00010000
+
 'Input vars
 DIM frameKey AS STRING
 DIM controls(NUM_PLAYERS_MAX_INDEX) AS UBYTE
@@ -137,7 +145,14 @@ END SUB
 'Reads the [playerIndex] player Kempston joystick
 SUB readPlayerKempston(playerIndex AS UBYTE)
     DIM tmpControl AS UBYTE = CONTROL_NONE
-    'TODO
+    DIM tmpKempston AS UBYTE = IN KEMPSTON_PORT
+
+    IF(tmpKempston bAND KEMPSTON_UP) tmpControl = tmpControl + CONTROL_UP
+    IF(tmpKempston bAND KEMPSTON_DOWN) tmpControl = tmpControl + CONTROL_DOWN
+    IF(tmpKempston bAND KEMPSTON_LEFT) tmpControl = tmpControl + CONTROL_LEFT
+    IF(tmpKempston bAND KEMPSTON_RIGHT) tmpControl = tmpControl + CONTROL_RIGHT
+    IF(tmpKempston bAND KEMPSTON_FIRE) tmpControl = tmpControl + CONTROL_FIRE
+
     controls(playerIndex) = tmpControl
 END SUB
 

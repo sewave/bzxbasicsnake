@@ -1,7 +1,6 @@
 'File with the game states subroutines
 DIM delayFrames AS UBYTE
 DIM delayedFrames AS UBYTE
-DIM redefinedKeys AS UBYTE
 
 'Kills the snake, showing GAME OVER
 SUB stateStartGameOver()
@@ -182,14 +181,14 @@ END SUB
 'Waits for the definition of all the game keys
 SUB stateWaitSelectKeys()
     DIM keyCode AS UBYTE = CODE(frameKey)
-    IF(keyCode >= FIRST_SELECTABLE_KEY and keyCode <= LAST_SELECTABLE_KEY)
+    IF(redefinedKeys > KEYS_MAX_INDEX)
+        setStateWaitFrames(SELECTED_KEYS_WAIT_FRAMES, STATE_START_TITLE)
+    ELSEIF(keyCodeAcceptable(keyCode, PLAYER_1_INDEX))
         PRINT AT SELECT_KEYS_ENTRY_Y_1 + redefinedKeys,_
             SELECT_KEYS_TITLE_X + REDEFINED_KEYS_OFFSET; frameKey
         keys(PLAYER_1_INDEX, redefinedKeys) = keyCode
         redefinedKeys = redefinedKeys + REDEFINED_KEYS_INC
-        setStateWaitNoKey(getGameState())
-    ELSEIF(redefinedKeys > KEYS_MAX_INDEX)
-        setStateWaitFrames(SELECTED_KEYS_WAIT_FRAMES, STATE_START_TITLE)       
+        setStateWaitNoKey(getGameState())      
     END IF    
 END SUB
 

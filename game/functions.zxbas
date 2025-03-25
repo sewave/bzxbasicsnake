@@ -9,6 +9,7 @@ DIM maxScore AS UBYTE
 DIM fruitX, fruitY AS UBYTE
 DIM snakeLength AS UBYTE
 DIM difficultyIndex AS UBYTE
+DIM redefinedKeys AS UBYTE
 
 'Checks if the snake is colliding with the fruit to increase score and
 'put a new fruit
@@ -303,3 +304,15 @@ SUB printInstructions()
                 INTRO_INSTRUCTIONS_JOY_OTHERS;
     END IF
 END SUB
+
+'Returns true if the new key is not already defined and is on the printable
+'uppercase range
+FUNCTION keyCodeAcceptable(keyCode AS UBYTE, playerIndex as UBYTE) AS UBYTE
+    IF(keyCode < FIRST_SELECTABLE_KEY or keyCode > LAST_SELECTABLE_KEY) RETURN FALSE
+    IF(redefinedKeys > REDEFINED_KEYS_INIT) 
+        FOR i = REDEFINED_KEYS_INIT TO redefinedKeys - REDEFINED_KEYS_INDEX_DEC
+            IF(keys(playerIndex, i) = keyCode) return FALSE
+        NEXT i
+    END IF
+    RETURN TRUE
+END FUNCTION
