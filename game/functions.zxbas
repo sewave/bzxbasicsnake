@@ -8,6 +8,7 @@ DIM score AS UBYTE
 DIM maxScore AS UBYTE
 DIM fruitX, fruitY AS UBYTE
 DIM snakeLength AS UBYTE
+DIM difficultyIndex AS UBYTE
 
 'Checks if the snake is colliding with the fruit to increase score and
 'put a new fruit
@@ -244,6 +245,13 @@ END SUB
 SUB drawScoreTexts()
     PRINT AT SCORE_STRING_Y, SCORE_STRING_X; INK FONT_COLOR; SCORE_STRING;
     PRINT AT BEST_STRING_Y, BEST_STRING_X; INK FONT_COLOR; BEST_STRING;
+END SUB
+
+'Prints at the difficulty cursor selected char
+SUB drawDifficultyCursor(character AS STRING)
+    PRINT AT DIFFICULTY_CURSOR_Y,_
+    DIFFICULTY_CURSOR_X + difficultyIndex * DIFFICULTY_CURSOR_STEP;_
+    INK SNAKE_COLOR;character;
 END SUB
 
 'Beeps the fruit sound

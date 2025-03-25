@@ -69,15 +69,26 @@ SUB stateStartTitle()
     'Print select difficulty
     PRINT AT DIFFICULTY_Y, DIFFICULTY_X; INK DIFFICULTY_COLOR; DIFFICULTY_STRING;
     
+    difficultyIndex = DIFFICULTY_INDEX_1
     setGameState(STATE_WAIT_DIFFICULTY)
 END SUB
 
 'Waits for difficulty selection to change game state
 SUB stateWaitDifficulty()
-    IF (frameKey = DIFFICULTY_1 OR frameKey = DIFFICULTY_2 OR frameKey = DIFFICULTY_3)
-        delayFrames = DIFFICULTY_FRAMES - VAL(frameKey)
+    DIM controls AS UBYTE = getControls()
+    
+    drawDifficultyCursor(DIFFICULTY_CURSOR_ERASE)
+    IF(controls bAND CONTROL_LEFT AND difficultyIndex > DIFFICULTY_INDEX_1)
+        difficultyIndex = difficultyIndex - DIFFICULTY_INDEX_STEP
+        setGameStateAndNext(STATE_WAIT_NO_KEY, STATE_WAIT_DIFFICULTY)
+    ELSEIF(controls bAND CONTROL_RIGHT AND difficultyIndex < DIFFICULTY_INDEX_3)
+        difficultyIndex = difficultyIndex + DIFFICULTY_INDEX_STEP
+        setGameStateAndNext(STATE_WAIT_NO_KEY, STATE_WAIT_DIFFICULTY)
+    ELSEIF(controls bAND CONTROL_FIRE)
+        delayFrames = DIFFICULTY_FRAMES - difficultyIndex
         setGameState(STATE_START_GAME)
     END IF
+    drawDifficultyCursor(DIFFICULTY_CURSOR_CHAR)
 END SUB
 
 'Resets the game, restores everything except the max score and difficulty
