@@ -3,6 +3,9 @@
 'Thanks to DamienG (https://damieng.com/typography/zx-origins/)
 'for the awesome fonts
 'Wave 2025
+
+'Set up max players to use less memory
+#define NUM_PLAYERS 1
 #include "common\constants.zxbas"
 #include "common\video.zxbas"
 #include "common\input.zxbas"
