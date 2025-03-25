@@ -125,13 +125,6 @@
 #define PAUSE_STRING "PAUSA"
 #define PAUSE_STRING_CLEAR "     "
 
-'Keys
-#define LEFT_KEY  "O"
-#define RIGHT_KEY "P"
-#define UP_KEY    "Q"
-#define DOWN_KEY  "A"
-#define PAUSE_KEY "S"
-
 'Intro constants
 #define INTRO_TITLE_X 0
 #define INTRO_TITLE_Y 3
@@ -155,13 +148,15 @@
 'Intro instructions
 #define INTRO_INSTRUCTIONS_X_1 4
 #define INTRO_INSTRUCTIONS_Y_1 15
-#define INTRO_INSTRUCTIONS_1  "\{b1}O: \{b0}Derecha \{b1}P: \{b0}Izquierda\{b1}"
+#define INTRO_INSTRUCTIONS_1_A ": Izquierda "
+#define INTRO_INSTRUCTIONS_1_B ": Derecha"
 #define INTRO_INSTRUCTIONS_X_2 4
 #define INTRO_INSTRUCTIONS_Y_2 16
-#define INTRO_INSTRUCTIONS_2  "\{b1}Q: \{b0}Arriba  \{b1}A: \{b0}Abajo\{b1}"
+#define INTRO_INSTRUCTIONS_2_A  ": Arriba    "
+#define INTRO_INSTRUCTIONS_2_B  ": Abajo"
 #define INTRO_INSTRUCTIONS_X_3 12
 #define INTRO_INSTRUCTIONS_Y_3 17
-#define INTRO_INSTRUCTIONS_3  "\{b1}S:\{b0} Pausa\{b1}"
+#define INTRO_INSTRUCTIONS_3  ": Pausa"
 #define INTRO_INSTRUCTIONS_COLOR WHITE
 
 'Intro max score
@@ -191,3 +186,11 @@
 
 'Initial frames delayed until logic is executed
 #define INITIAL_DELAYED_FRAMES 0
+#define DELAYED_FRAMES_INC     1
+
+'Direction
+#define DIRECTION_NONE  %00000000
+#define DIRECTION_UP    %00000001
+#define DIRECTION_DOWN  %00000010
+#define DIRECTION_LEFT  %00000100
+#define DIRECTION_RIGHT %00001000

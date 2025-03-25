@@ -15,7 +15,7 @@
 setGameState(STATE_INIT_GAME)
 'Main loop
 DO
-    frameKey = readKeyUpperCase()
+    updateControls()
     RANDOMIZE USR stateSubroutines(getGameState())
     waitVsync()
 LOOP

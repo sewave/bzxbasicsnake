@@ -1,10 +1,3 @@
-'Movement
-#define NONE  %00000000
-#define UP    %00000001
-#define DOWN  %00000010
-#define LEFT  %00000100
-#define RIGHT %00001000
-
 'Colors
 #define BLACK       0
 #define BLUE        1

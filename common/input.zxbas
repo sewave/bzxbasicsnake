@@ -1,10 +1,29 @@
-'Key constants
+'Input constants
 #define FIRST_UPPERCASE_CHAR 60h
 #define LOWER_TO_UPPERCASE 20h
 #define NO_KEY ""
 
+'Controls
+#define CONTROL_NONE  %00000000
+#define CONTROL_UP    %00000001
+#define CONTROL_DOWN  %00000010
+#define CONTROL_LEFT  %00000100
+#define CONTROL_RIGHT %00001000
+#define CONTROL_FIRE  %00010000
+
+'Control indexes
+#define CONTROL_LEFT_INDEX  0
+#define CONTROL_RIGHT_INDEX 1
+#define CONTROL_UP_INDEX    2
+#define CONTROL_DOWN_INDEX  3
+#define CONTROL_FIRE_INDEX  4
+
 'Input vars
 DIM frameKey AS STRING
+DIM controls AS UBYTE
+
+'Default keys
+DIM keys AS STRING = "OPQAM"
 
 'Reads a key from keyboard and if its 60h or plus lowers it by 20h,
 'effectively making it uppercase in case of letters
@@ -15,3 +34,22 @@ FUNCTION readKeyUpperCase() AS STRING
     IF(charVal >= FIRST_UPPERCASE_CHAR) key = CHR(charVal - LOWER_TO_UPPERCASE)
     RETURN key
 END FUNCTION
+
+'Returns the controls readed for the frame
+FUNCTION getControls() AS UBYTE
+    RETURN controls
+END FUNCTION
+
+'Updates the controls reading the [keys]
+SUB updateControls()
+    controls = CONTROL_NONE
+    
+    'Sets the uppercase key to use in other places
+    frameKey = readKeyUpperCase()
+    
+    IF(frameKey = keys(CONTROL_UP_INDEX)) controls = controls + CONTROL_UP
+    IF(frameKey = keys(CONTROL_DOWN_INDEX)) controls = controls + CONTROL_DOWN
+    IF(frameKey = keys(CONTROL_LEFT_INDEX)) controls = controls + CONTROL_LEFT
+    IF(frameKey = keys(CONTROL_RIGHT_INDEX)) controls = controls + CONTROL_RIGHT
+    IF(frameKey = keys(CONTROL_FIRE_INDEX)) controls = controls + CONTROL_FIRE
+END SUB

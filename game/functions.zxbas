@@ -78,15 +78,15 @@ END SUB
 SUB drawSnakeHead()
     DIM snakeChar AS STRING
 
-    IF(direction = NONE)
+    IF(direction = DIRECTION_NONE)
         snakeChar = SNAKE_HEAD_FRONT
-    ELSEIF(direction = RIGHT)
+    ELSEIF(direction = DIRECTION_RIGHT)
         snakeChar = SNAKE_HEAD_RIGHT
-    ELSEIF (direction = LEFT)
+    ELSEIF (direction = DIRECTION_LEFT)
         snakeChar = SNAKE_HEAD_LEFT
-    ELSEIF (direction = UP)
+    ELSEIF (direction = DIRECTION_UP)
         snakeChar = SNAKE_HEAD_UP
-    ELSEIF (direction = DOWN)
+    ELSEIF (direction = DIRECTION_DOWN)
         snakeChar = SNAKE_HEAD_DOWN
     END IF
     PRINT AT snakeY(headPosition), snakeX(headPosition) ; INK SNAKE_COLOR ; snakeChar;
@@ -94,22 +94,23 @@ END SUB
 
 'Reads the input and sets the snake direction, checks for pause too
 SUB processInput()
-    IF(frameKey = LEFT_KEY AND direction <> RIGHT)
-        direction = LEFT
-    ELSEIF(frameKey = RIGHT_KEY AND direction <> LEFT)
-        direction = RIGHT
-    ELSEIF(frameKey = UP_KEY AND direction <> DOWN)
-        direction = UP
-    ELSEIF(frameKey = DOWN_KEY AND direction <> UP)
-        direction = DOWN
-    ELSEIF(frameKey = PAUSE_KEY)
+    DIM controls AS UBYTE = getControls()
+    IF((controls bAND CONTROL_LEFT) AND direction <> DIRECTION_RIGHT)
+        direction = DIRECTION_LEFT
+    ELSEIF((controls bAND CONTROL_RIGHT) AND direction <> DIRECTION_LEFT)
+        direction = DIRECTION_RIGHT
+    ELSEIF((controls bAND CONTROL_UP) AND direction <> DIRECTION_DOWN)
+        direction = DIRECTION_UP
+    ELSEIF((controls bAND CONTROL_DOWN) AND direction <> DIRECTION_UP)
+        direction = DIRECTION_DOWN
+    ELSEIF(controls bAND CONTROL_FIRE)
         setGameState(STATE_START_PAUSE)
     END IF
 END SUB
 
 'Updates the player snake and head if it is moving
 SUB updatePlayer()
-    IF(direction <> NONE)
+    IF(direction <> DIRECTION_NONE)
         updateSnakeHeadPosition()
         updateSnakeTailPosition()
     END IF
@@ -148,7 +149,7 @@ SUB updateSnakeHeadPosition()
     
     headPosition = headPosition + NEXT_HEAD_INC
     IF(headPosition > MAX_SNAKE_INDEX) headPosition = MIN_SNAKE_INDEX
-    IF(direction = RIGHT)
+    IF(direction = DIRECTION_RIGHT)
         snakeX(headPosition) = prevHeadX + HEAD_SPEED
         snakeY(headPosition) = prevHeadY
         IF(oldHeadY > prevHeadY)
@@ -159,7 +160,7 @@ SUB updateSnakeHeadPosition()
             prevHeadChar = SNAKE_BODY_HOR
         END IF
         if oldHeadX = SNAKE_OUT_BOUNDS_X prevHeadChar = SNAKE_TAIL_RIGHT
-    ELSEIF(direction = LEFT)
+    ELSEIF(direction = DIRECTION_LEFT)
         snakeX(headPosition) = prevHeadX - HEAD_SPEED
         snakeY(headPosition) = prevHeadY
         IF(oldHeadY > prevHeadY)
@@ -170,7 +171,7 @@ SUB updateSnakeHeadPosition()
             prevHeadChar = SNAKE_BODY_HOR
         END IF
         if oldHeadX = SNAKE_OUT_BOUNDS_X prevHeadChar = SNAKE_TAIL_LEFT
-    ELSEIF(direction = UP)
+    ELSEIF(direction = DIRECTION_UP)
         snakeX(headPosition) = prevHeadX
         snakeY(headPosition) = prevHeadY - HEAD_SPEED
         IF(oldHeadX > prevHeadX)
@@ -181,7 +182,7 @@ SUB updateSnakeHeadPosition()
             prevHeadChar = SNAKE_BODY_VER
         END IF
         if oldHeadX = SNAKE_OUT_BOUNDS_X prevHeadChar = SNAKE_TAIL_DOWN
-    ELSEIF(direction = DOWN)
+    ELSEIF(direction = DIRECTION_DOWN)
         snakeX(headPosition) = prevHeadX
         snakeY(headPosition) = prevHeadY + HEAD_SPEED
         IF(oldHeadX > prevHeadX)
@@ -225,9 +226,7 @@ END SUB
 'generate a new fruit in an unused space
 FUNCTION fruitInSnake() AS UBYTE
     FOR i = MIN_SNAKE_INDEX TO MAX_SNAKE_INDEX
-        IF(snakeX(i) = fruitX AND snakeY(i) = fruitY)
-            return TRUE
-        END IF
+        IF(snakeX(i) = fruitX AND snakeY(i) = fruitY) return TRUE
     NEXT i
     RETURN FALSE
 END FUNCTION
