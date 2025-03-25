@@ -37,7 +37,7 @@
 #define CONTROL_TYPE_KEMPSTON   1
 #define CONTROL_TYPE_SINCLAIR_1 2
 #define CONTROL_TYPE_SINCLAIR_2 3
-#define CONTROL_TYPE_PROTEK     4
+#define CONTROL_TYPE_CURSOR     4
 
 #define NUM_PLAYERS_MAX_INDEX NUM_PLAYERS - 1
 #define KEYS_MAX_INDEX CONTROL_FIRE_INDEX
@@ -62,7 +62,7 @@ DIM sinclairOne(KEYS_MAX_INDEX) AS UBYTE => { $36, $37, $39, $38, $30 }
 '1 (left), 2 (right), 4 (up), 3 (down) and 5 (fire)
 DIM sinclairTwo(KEYS_MAX_INDEX) AS UBYTE => { $31, $32, $34, $33, $35 }
 '5 (left), 8 (right), 7 (up), 6 (down) and 0 (fire)
-DIM protek(KEYS_MAX_INDEX) AS UBYTE => { $35, $38, $37, $36, $30 }
+DIM cursor(KEYS_MAX_INDEX) AS UBYTE => { $35, $38, $37, $36, $30 }
 
 'Reads a key from keyboard and if its 60h or plus lowers it by 20h,
 'effectively making it uppercase in case of letters
@@ -112,8 +112,8 @@ SUB setControlType(playerIndex AS UBYTE, controlType AS UBYTE)
         copyKeys(playerIndex, sinclairOne)
     ELSEIF(controlType = CONTROL_TYPE_SINCLAIR_2)
         copyKeys(playerIndex, sinclairTwo)
-    ELSEIF(controlType = CONTROL_TYPE_PROTEK)
-        copyKeys(playerIndex, protek)
+    ELSEIF(controlType = CONTROL_TYPE_CURSOR)
+        copyKeys(playerIndex, cursor)
     END IF
 END SUB
 
